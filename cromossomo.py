@@ -14,6 +14,10 @@ class Cromossomo():
     self.max = max
     self.genotipo = genotipo
 
+  def calculate_fitness(self, base=21):
+    # min value is 1 and max is 21
+    return base - self.ackley_function()
+
   def ackley_function(self):
     fenotipos = self.get_fenotipos()
     sum_1 = sum(power(fenotipos))
