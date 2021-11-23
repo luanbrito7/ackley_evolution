@@ -1,7 +1,7 @@
 import math
 import random
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 from cromossomo import Cromossomo
 from selection import parent_selection, survivor_selection, solution_found, converged_number, average_fitness, highest_fitness
 
@@ -16,24 +16,24 @@ def run_evolution():
     population.append(Cromossomo.random(240))
 
   iterations = 0
-  while(iterations <= 20000 and not solution_found(population)):
+  while(iterations <= 10000 and not solution_found(population)):
     #Crossover
     crossover_prob = random.random()
     if(crossover_prob <= 0.9):
-      parents = parent_selection(population,'best_random',10)
-      childs = parents[0].crossover(parents[1],'uniform')
-      population.extend(childs)
+      for _ in range(10):
+        parents = parent_selection(population,'best_random',10)
+        childs = parents[0].crossover(parents[1],'uniform')
+        population.extend(childs)
 
     #Mutation
     for p in population:
-      p.mutation(0.05,'invert_bits')
+      p.mutation(0.1,'invert_bits')
 
     #Selection
     for _ in range(len(population)-n_population):
       population = survivor_selection(population,'elitist',10)
     
     iterations += 1
-    print(iterations)
   
   return {
     "iterations": iterations,
@@ -77,7 +77,7 @@ def avaliate(iterations):
   plt.show()
 
 def main():
-  avaliate(10)
+  avaliate(5)
 
 if __name__ == "__main__":
   main()

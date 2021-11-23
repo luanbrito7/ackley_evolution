@@ -125,7 +125,7 @@ def roulette_invert(population):
 
 def solution_found(population):
   for p in population:
-    if (p.calculate_fitness() >= 20.0):
+    if (p.calculate_fitness() > 20.5):
       return True
   return False
 
@@ -133,7 +133,7 @@ def converged_number(population):
   total = 0
   for p in population:
     actual_fit = p.calculate_fitness()
-    if actual_fit >= 20.0:
+    if actual_fit > 20.5:
       total += 1
   return total
 
