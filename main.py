@@ -7,6 +7,7 @@ from selection import parent_selection, survivor_selection, solution_found, conv
 
 def run_evolution():
   population = []
+  evolution_data = []
 
   # 100 pais na populaçao
   n_population = 200
@@ -27,19 +28,24 @@ def run_evolution():
 
     #Mutation
     for p in population:
-      p.mutation(0.1,'invert_bits')
+      p.mutation(0.2,'invert_bits')
 
     #Selection
     for _ in range(len(population)-n_population):
-      population = survivor_selection(population,'elitist',10)
+      population = survivor_selection(population,'tournament',10)
     
+    evolution_data.append({
+      "average_fitness": average_fitness(population),
+      "best_fitness": highest_fitness(population)[1]
+    })
     iterations += 1
   
   return {
     "iterations": iterations,
     "converged_number": converged_number(population),
     "average_fitness": average_fitness(population),
-    "best_fitness": highest_fitness(population)
+    "best_fitness": highest_fitness(population),
+    "evolution_data": evolution_data
   }
 
 def dp(iterations, mean):
@@ -59,15 +65,40 @@ def avaliate(iterations):
     a_f= res["average_fitness"]
     best_fit = res["best_fitness"]
     average_fitness.append(a_f)
-    print("Iteration: ", i + 1)
-    print("Average fitness: ", a_f)
-    print("Best fitness: ", best_fit)
-    print("Number of individuals converged: ", converged_number)
+    evolution_data = res['evolution_data']
     total_generations.append(generations)
     if converged_number > 0:
       converged_iterations += 1
   mean = sum(total_generations) / iterations
   res_dp = dp(total_generations, mean)
+  a_f = [d['average_fitness'] for d in evolution_data]
+  max_f = [d['best_fitness'] for d in evolution_data]
+  plt.plot(list(range(len(evolution_data))), a_f)
+  plt.xlabel("iterations")
+  plt.ylabel("average fitness")
+  plt.title("Average fitness per iteration")
+  plt.tight_layout()
+  plt.fill_between(list(range(len(evolution_data))), a_f)
+  plt.savefig('average.png')
+
+  plt.figure().clear()
+  plt.close()
+  plt.cla()
+  plt.clf()
+
+  plt.plot(list(range(len(evolution_data))), max_f)
+  plt.xlabel("iterations")
+  plt.ylabel("max fitness")
+  plt.title("Max fitness per iteration")
+  plt.tight_layout()
+  plt.fill_between(list(range(len(evolution_data))), max_f)
+  plt.savefig('max.png')
+
+  plt.figure().clear()
+  plt.close()
+  plt.cla()
+  plt.clf()
+
   print("Generations mean: ", mean)
   print("Generations DP: ", res_dp)
   print("Converged in %", converged_iterations/iterations)
